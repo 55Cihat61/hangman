@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hangman-Spiel</title>
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; }
+        #wordDisplay { font-size: 2em; margin: 20px; }
+    </style>
+</head>
+<body>
+    <h1>Hangman-Spiel</h1>
+    <p id="wordDisplay"></p>
+    <p>Verbleibende Versuche: <span id="attempts">7</span></p>
+    <input type="text" id="letterInput" maxlength="1">
+    <button onclick="guessLetter()">Raten</button>
+    <p id="message"></p>
+
+    <script>
+        let wort = "Hallo".toLowerCase();
+        let vWort = "_".repeat(wort.length).split("");
+        let versuch = 7;
+        let guessedLetters = [];
+        
+        document.getElementById("wordDisplay").textContent = vWort.join(" ");
+        
+        function guessLetter() {
+            let input = document.getElementById("letterInput").value.toLowerCase();
+            document.getElementById("letterInput").value = "";
+            document.getElementById("message").textContent = "";
+            
+            if (!input || guessedLetters.includes(input)) {
+                document.getElementById("message").textContent = "Ungültige Eingabe oder bereits geraten!";
+                return;
+            }
+            
+            guessedLetters.push(input);
+            
+            if (wort.includes(input)) {
+                for (let i = 0; i < wort.length; i++) {
+                    if (wort[i] === input) {
+                        vWort[i] = input;
+                    }
+                }
+            } else {
+                versuch--;
+            }
+            
+            document.getElementById("wordDisplay").textContent = vWort.join(" ");
+            document.getElementById("attempts").textContent = versuch;
+            
+            if (vWort.join("") === wort) {
+                document.getElementById("message").textContent = "Glückwunsch! Du hast gewonnen!";
+                disableInput();
+            } else if (versuch === 0) {
+                document.getElementById("message").textContent = `Du hast verloren. Das Wort war: ${wort}`;
+                disableInput();
+            }
+            
+        }
+        
+        function disableInput() {
+            document.getElementById("letterInput").disabled = true;
+        }
+        document.getElementById("letterInput").addEventListener("keypress", function(event) {
+    if (event.key === "Enter") {
+        document.querySelector("button").click();
+    }
+});
+
+    </script>
+</body>
+</html>
